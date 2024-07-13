@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy birthday</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 24px;
+            display: none; /* Initially hidden */
+        }
+        /* Your form and button styles */
+    </style>
+</head>
+<body>
+    <audio id="background-music" loop>
+        <source src="clips/music.mp3" type="audio/mp3">
+        Your browser does not support the audio tag.
+    </audio>
+    <div class="video-container" onclick="function1()">
+        <video class="vdo" autoplay playsinline>
+            <source src="clips/1.mov" type="video/mp4">
+        </video>
+        <div class="loading-overlay" id="loading-overlay">Loading...</div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const audio = document.getElementById('background-music');
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            const playAudio = () => {
+                audio.play().catch(error => {
+                    console.log('Autoplay was prevented:', error);
+                });
+            };
+
+            if (isMobile) {
+                document.addEventListener('click', playAudio, { once: true });
+            } else {
+                playAudio();
+            }
+            
+            // Preload the videos
+            for (let i = 2; i <= 12; i++) {
+                const link = document.createElement('link');
+                link.rel = 'preload';
+                link.as = 'video';
+                link.href = `clips/${i}.mov`;
+                document.head.appendChild(link);
+            }
+        });
+
+        let vdo = 1;
+        function function1() {
+            const videoElement = document.querySelector('.vdo');
+            const loadingOverlay = document.getElementById('loading-overlay');
+
+            if (vdo < 12) {
+                vdo++;
+                loadingOverlay.style.display = 'flex'; // Show loading overlay
+                
+                videoElement.innerHTML = `<source src="clips/${vdo}.mov" type="video/mp4">`;
+                videoElement.load();
+                videoElement.play().then(() => {
+                    loadingOverlay.style.display = 'none'; // Hide loading overlay when video starts playing
+                }).catch(error => {
+                    console.log('Video play error:', error);
+                    loadingOverlay.style.display = 'none'; // Hide loading overlay on error
+                });
+            }
+        }
+    </script>
+</body>
+</html>
